@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 Anime Recommender - Find Your Next Favorite! 🌸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            transform: scale(1.05);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ff6b6b;
+            border-radius: 15px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .preferences-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .genre-tag {
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .genre-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .genre-tag.selected {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            transform: scale(1.05);
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .anime-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .anime-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .anime-genre {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .anime-rating {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .anime-synopsis {
+            color: #555;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .recommendations-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .recommendations-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sparkles {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5em;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .page-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            color: #cc0000;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .preferences-form {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+        .credit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px; /* optional */
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌸 Anime Recommender 🌸</h1>
+            <p class="subtitle">Discover your next favorite anime adventure!</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-button active" onclick="switchTab('search')">🔍 Search</button>
+            <button class="tab-button" onclick="switchTab('preferences')">⚙️ Preferences</button>
+            <button class="tab-button" onclick="switchTab('trending')">🔥 Trending</button>
+        </nav>
+
+        <div id="search" class="tab-content active">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for anime titles...">
+                <select id="genreFilter">
+                    <option value="">All Genres</option>
+                </select>
+                <button class="search-btn" onclick="searchAnime()">Search</button>
+            </div>
+            <div id="searchResults" class="anime-grid"></div>
+            <div id="searchPagination" class="pagination"></div>
+        </div>
+
+        <div id="preferences" class="tab-content">
+            <div class="preferences-form">
+                <div class="form-group">
+                    <label for="favoriteGenres">Favorite Genres:</label>
+                    <div class="genre-grid" id="genreGrid">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="preferredLength">Preferred Length:</label>
+                    <select id="preferredLength">
+                        <option value="">Any Length</option>
+                        <option value="short">Short (1-12 episodes)</option>
+                        <option value="medium">Medium (13-26 episodes)</option>
+                        <option value="long">Long (27+ episodes)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="minRating">Minimum Rating:</label>
+                    <select id="minRating">
+                        <option value="">Any Rating</option>
+                        <option value="7">7.0+</option>
+                        <option value="8">8.0+</option>
+                        <option value="9">9.0+</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="recommendations-btn" onclick="getRecommendations()">
+                ✨ Get Personalized Recommendations ✨
+            </button>
+            
+            <div id="recommendationResults" class="anime-grid"></div>
+        </div>
+
+        <div id="trending" class="tab-content">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #ff6b6b;">🔥 Trending Anime This Season 🔥</h2>
+            <div id="trendingResults" class="anime-grid"></div>
+        </div>
+        <div class="credit">
+            <p>✨ by Polimera Pragna Sresta ✨</p>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let animeDatabase = [// High-rated anime
+    {
+        id: 32281,
+        title: "Kimi no Na wa.",
+        genre: "Drama, Romance, School, Supernatural",
+        type: "Movie",
+        episodes: 1,
+        rating: 9.4,
+        members: 200630,
+        synopsis: "A beautiful supernatural romance about two teenagers who mysteriously swap bodies."
+    },
+    {
+        id: 5114,
+        title: "Fullmetal Alchemist: Brotherhood",
+        genre: "Action, Adventure, Drama, Fantasy, Magic, Military, Shounen",
+        type: "TV",
+        episodes: 64,
+        rating: 9.3,
+        members: 793665,
+        synopsis: "Two brothers use alchemy to try to resurrect their mother."
+    },
+    {
+        id: 28977,
+        title: "Gintama°",
+        genre: "Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen",
+        type: "TV",
+        episodes: 51,
+        rating: 9.3,
+        members: 114262,
+        synopsis: "The continuation of the hilarious adventures of Gintoki and his friends."
+    },
+    {
+        id: 9253,
+        title: "Steins;Gate",
+        genre: "Sci-Fi, Thriller",
+        type: "TV",
+        episodes: 24,
+        rating: 9.2,
+        members: 673572,
+        synopsis: "A self-proclaimed mad scientist discovers he can send messages to the past."
+    },
+    {
+        id: 9969,
+        title: "Gintama'",
+        genre: "Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen",
+        type: "TV",
+        episodes: 51,
+        rating: 9.2,
+        members: 151266,
+        synopsis: "More comedic adventures featuring the silver-haired samurai Gintoki."
+    },
+    {
+        id: 32935,
+        title: "Haikyuu!!: Karasuno Koukou VS Shiratorizawa Gakuen Koukou",
+        genre: "Comedy, Drama, School, Shounen, Sports",
+        type: "TV",
+        episodes: 10,
+        rating: 9.2,
+        members: 93351,
+        synopsis: "The intense volleyball showdown between Karasuno High School and Shiratorizawa Academy."
+    },
+    {
+        id: 11061,
+        title: "Hunter x Hunter (2011)",
+        genre: "Action, Adventure, Shounen, Super Power",
+        type: "TV",
+        episodes: 148,
+        rating: 9.1,
+        members: 425855,
+        synopsis: "A young boy searches for his father while becoming a Hunter."
+    },
+    {
+        id: 820,
+        title: "Ginga Eiyuu Densetsu",
+        genre: "Drama, Military, Sci-Fi, Space",
+        type: "TV",
+        episodes: 110,
+        rating: 9.1,
+        members: 89457,
+        synopsis: "An epic space opera depicting the clash between two galactic powers."
+    },
+    {
+        id: 15417,
+        title: "Gintama Movie: Kanketsu-hen - Yorozuya yo Eien Nare",
+        genre: "Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen",
+        type: "Movie",
+        episodes: 1,
+        rating: 9.1,
+        members: 54328,
+        synopsis: "A movie continuation of the Gintama series."
+    },
+    {
+        id: 15335,
+        title: "Gintama': Enchousen",
+        genre: "Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen",
+        type: "TV",
+        episodes: 13,
+        rating: 9.1,
+        members: 78965,
+        synopsis: "The extended arc of Gintama' featuring more intense storylines."
+    },
+    {
+        id: 2167,
+        title: "Clannad: After Story",
+        genre: "Drama, Fantasy, Romance, Slice of Life, Supernatural",
+        type: "TV",
+        episodes: 24,
+        rating: 9.1,
+        members: 456789,
+        synopsis: "The emotional continuation of Clannad."
+    },
+    {
+        id: 28851,
+        title: "Koe no Katachi",
+        genre: "Drama, School, Shounen",
+        type: "Movie",
+        episodes: 1,
+        rating: 9.1,
+        members: 387654,
+        synopsis: "A deeply moving story about redemption and bullying."
+    },
+    
+    // Additional anime with 6.2 rating
+    {
+        id: 40001,
+        title: "Soul Worker: Your Destiny Awaits",
+        genre: "Action, Fantasy, Sci-Fi",
+        type: "TV",
+        episodes: 5,
+        rating: 6.2,
+        members: 15423,
+        synopsis: "A sci-fi action series set in a post-apocalyptic world."
+    },
+    {
+        id: 40002,
+        title: "Super Kuma-san",
+        genre: "Comedy, Fantasy",
+        type: "Movie",
+        episodes: 1,
+        rating: 6.2,
+        members: 8765,
+        synopsis: "A whimsical tale about a super-powered bear."
+    },
+    {
+        id: 40003,
+        title: "Teekyuu 6 Specials",
+        genre: "Comedy, Shounen, Sports",
+        type: "Special",
+        episodes: 2,
+        rating: 6.2,
+        members: 12456,
+        synopsis: "Special episodes of the fast-paced tennis comedy series."
+    },
+    {
+        id: 40004,
+        title: "Thermae Romae: Kodai Romajin ga Uchuu e",
+        genre: "Comedy, Seinen, Space",
+        type: "Movie",
+        episodes: 1,
+        rating: 6.2,
+        members: 9876,
+        synopsis: "A comedic space adventure featuring ancient Romans."
+    },
+    {
+        id: 40005,
+        title: "Zoku Attacker You! Kin Medal e no Michi",
+        genre: "Romance, Sports",
+        type: "TV",
+        episodes: 52,
+        rating: 6.2,
+        members: 23456,
+        synopsis: "A sports romance series following volleyball players."
+    },
+    {
+        id: 40006,
+        title: "21 Emon",
+        genre: "Comedy, Sci-Fi, Space",
+        type: "TV",
+        episodes: 39,
+        rating: 6.2,
+        members: 18765,
+        synopsis: "A space-age comedy about a young man working at his family's hotel in space."
+    },
+    {
+        id: 40007,
+        title: "Akai Kiba: Blue Sonnet",
+        genre: "Action, Drama, Sci-Fi, Shoujo, Super Power",
+        type: "TV",
+        episodes: 5,
+        rating: 6.2,
+        members: 14567,
+        synopsis: "A shoujo action series featuring characters with supernatural powers."
+    },
+    {
+        id: 40008,
+        title: "Andromeda Stories",
+        genre: "Action, Drama, Fantasy, Sci-Fi, Space",
+        type: "Movie",
+        episodes: 1,
+        rating: 6.2,
+        members: 11234,
+        synopsis: "An epic space fantasy adventure set in the Andromeda galaxy."
+    },
+    {
+        id: 40009,
+        title: "Apfelland Monogatari",
+        genre: "Adventure, Drama, Historical",
+        type: "Movie",
+        episodes: 1,
+        rating: 6.2,
+        members: 7890,
+        synopsis: "A historical adventure drama set in a land of apples."
+    },
+    {
+        id: 40010,
+        title: "Barbapapa (1977)",
+        genre: "Comedy, Fantasy, Kids",
+        type: "TV",
+        episodes: 48,
+        rating: 6.2,
+        members: 34567,
+        synopsis: "A classic children's fantasy comedy about the colorful Barbapapa family."
+    },
+    {
+        id: 40011,
+        title: "Barbapapa Sekai wo Mawaru",
+        genre: "Adventure, Comedy",
+        type: "TV",
+        episodes: 50,
+        rating: 6.2,
+        members: 28765,
+        synopsis: "The Barbapapa family travels around the world."
+    },
+    {
+        id: 40012,
+        title: "Ben-To Picture Drama",
+        genre: "Comedy",
+        type: "Special",
+        episodes: 6,
+        rating: 6.2,
+        members: 16789,
+        synopsis: "Special picture drama episodes of the Ben-To series."
+    }
+];
+        let currentPage = 1;
+        const itemsPerPage = 12;
+        let selectedGenres = [];
+        let allGenres = [];
+
+        // Backend API URL - Update this to match your backend
+        const API_BASE_URL = 'http://localhost:5000'; // Change this to your backend URL
+
+        // Load anime data from CSV via backend
+        async function loadAnimeData() {
+            try {
+                showLoading('searchResults');
+                
+                // Try multiple common endpoint patterns
+                let response;
+                const endpoints = ['/api/anime', '/anime', '/api/data', '/data', '/get_anime'];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        response = await fetch(`${API_BASE_URL}${endpoint}`);
+                        if (response.ok) break;
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw new Error(`Failed to fetch data from backend`);
+                }
+                
+                const data = await response.json();
+                
+                // Handle different response formats
+                animeDatabase = Array.isArray(data) ? data : (data.anime || data.data || []);
+                
+                // Extract unique genres
+                extractGenres();
+                
+                // Initialize UI
+                displayAnime(animeDatabase.slice(0, itemsPerPage), 'searchResults');
+                setupPagination(animeDatabase.length, 'searchPagination');
+                
+            } catch (error) {
+                console.error('Error loading anime data:', error);
+                showError('searchResults', 'Failed to load anime data. Please check if your backend is running at ' + API_BASE_URL);
+            }
+        }
+
+        // Extract unique genres from the database
+        function extractGenres() {
+            const genreSet = new Set();
+            animeDatabase.forEach(anime => {
+                // Handle different possible genre field names
+                const genreFields = ['genre', 'genres', 'Genre', 'Genres', 'category', 'categories'];
+                let genreData = null;
+                
+                for (const field of genreFields) {
+                    if (anime[field]) {
+                        genreData = anime[field];
+                        break;
+                    }
+                }
+                
+                if (genreData) {
+                    // Handle both string and array genres
+                    let genres = [];
+                    if (Array.isArray(genreData)) {
+                        genres = genreData;
+                    } else if (typeof genreData === 'string') {
+                        // Handle different separators
+                        genres = genreData.split(/[,|;\/]/).map(g => g.trim());
+                    }
+                    
+                    genres.forEach(genre => {
+                        if (genre && genre.length > 0) {
+                            genreSet.add(genre);
+                        }
+                    });
+                }
+            });
+            
+            allGenres = Array.from(genreSet).sort();
+            
+            // Populate genre filter dropdown
+            const genreFilter = document.getElementById('genreFilter');
+            genreFilter.innerHTML = '<option value="">All Genres</option>';
+            allGenres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre.toLowerCase();
+                option.textContent = genre;
+                genreFilter.appendChild(option);
+            });
+            
+            // Populate genre grid for preferences
+            const genreGrid = document.getElementById('genreGrid');
+            genreGrid.innerHTML = allGenres.map(genre => 
+                `<div class="genre-tag" onclick="toggleGenre(this)">${genre}</div>`
+            ).join('');
+        }
+
+        // Show loading animation
+        function showLoading(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<div class="loading">Loading anime data... 🌸</div>';
+        }
+
+        // Show error message
+        function showError(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        // Switch between tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'trending') {
+                loadTrendingAnime();
+            }
+        }
+
+        // Search anime function
+        function searchAnime() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const genreFilter = document.getElementById('genreFilter').value.toLowerCase();
+            
+            let filteredAnime = animeDatabase.filter(anime => {
+                // Handle different possible title field names
+                const titleFields = ['title', 'name', 'anime_title', 'Title', 'Name'];
+                let title = '';
+                for (const field of titleFields) {
+                    if (anime[field]) {
+                        title = anime[field].toLowerCase();
+                        break;
+                    }
+                }
+                
+                const matchesSearch = title.includes(searchTerm);
+                
+                let matchesGenre = true;
+                if (genreFilter) {
+                    const genreFields = ['genre', 'genres', 'Genre', 'Genres', 'category', 'categories'];
+                    let genreData = null;
+                    
+                    for (const field of genreFields) {
+                        if (anime[field]) {
+                            genreData = anime[field];
+                            break;
+                        }
+                    }
+                    
+                    if (genreData) {
+                        let animeGenres = [];
+                        if (Array.isArray(genreData)) {
+                            animeGenres = genreData;
+                        } else if (typeof genreData === 'string') {
+                            animeGenres = genreData.split(/[,|;\/]/).map(g => g.trim());
+                        }
+                        
+                        matchesGenre = animeGenres.some(g => g.toLowerCase().includes(genreFilter));
+                    } else {
+                        matchesGenre = false;
+                    }
+                }
+                
+                return matchesSearch && matchesGenre;
+            });
+            
+            currentPage = 1;
+            displayAnime(filteredAnime.slice(0, itemsPerPage), 'searchResults');
+            setupPagination(filteredAnime.length, 'searchPagination', filteredAnime);
+        }
+
+        // Toggle genre selection
+        function toggleGenre(element) {
+            const genre = element.textContent;
+            element.classList.toggle('selected');
+            
+            if (selectedGenres.includes(genre)) {
+                selectedGenres = selectedGenres.filter(g => g !== genre);
+            } else {
+                selectedGenres.push(genre);
+            }
+        }
+
+        // Get personalized recommendations
+        async function getRecommendations() {
+            const preferredLength = document.getElementById('preferredLength').value;
+            const minRating = parseFloat(document.getElementById('minRating').value) || 0;
+            
+            // Try to get ML recommendations from backend first
+            try {
+                const response = await fetch(`${API_BASE_URL}/recommend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        genres: selectedGenres,
+                        min_rating: minRating,
+                        preferred_length: preferredLength
+                    })
+                });
+                
+                if (response.ok) {
+                    const mlRecommendations = await response.json();
+                    displayAnime(Array.isArray(mlRecommendations) ? mlRecommendations : mlRecommendations.recommendations || [], 'recommendationResults');
+                    createSparkles();
+                    return;
+                }
+            } catch (error) {
+                console.log('ML recommendations not available, using fallback method');
+            }
+            
+            // Fallback to client-side filtering
+            let recommendations = animeDatabase.filter(anime => {
+                // Check genre match
+                let matchesGenre = selectedGenres.length === 0;
+                if (selectedGenres.length > 0) {
+                    const genreFields = ['genre', 'genres', 'Genre', 'Genres', 'category', 'categories'];
+                    let genreData = null;
+                    
+                    for (const field of genreFields) {
+                        if (anime[field]) {
+                            genreData = anime[field];
+                            break;
+                        }
+                    }
+                    
+                    if (genreData) {
+                        let animeGenres = [];
+                        if (Array.isArray(genreData)) {
+                            animeGenres = genreData;
+                        } else if (typeof genreData === 'string') {
+                            animeGenres = genreData.split(/[,|;\/]/).map(g => g.trim());
+                        }
+                        
+                        matchesGenre = selectedGenres.some(g => animeGenres.includes(g));
+                    }
+                }
+                
+                // Check rating
+                const ratingFields = ['rating', 'score', 'Rating', 'Score', 'imdb_rating', 'mal_rating'];
+                let rating = 0;
+                for (const field of ratingFields) {
+                    if (anime[field]) {
+                        rating = parseFloat(anime[field]) || 0;
+                        break;
+                    }
+                }
+                const matchesRating = rating >= minRating;
+                
+                // Check length
+                let matchesLength = true;
+                if (preferredLength) {
+                    const episodeFields = ['episodes', 'episode_count', 'Episodes', 'ep_count', 'total_episodes'];
+                    let episodes = 0;
+                    for (const field of episodeFields) {
+                        if (anime[field]) {
+                            episodes = parseInt(anime[field]) || 0;
+                            break;
+                        }
+                    }
+                    
+                    if (preferredLength === 'short') {
+                        matchesLength = episodes <= 12;
+                    } else if (preferredLength === 'medium') {
+                        matchesLength = episodes >= 13 && episodes <= 26;
+                    } else if (preferredLength === 'long') {
+                        matchesLength = episodes >= 27;
+                    }
+                }
+                
+                return matchesGenre && matchesRating && matchesLength;
+            });
+            
+            // Sort by rating (descending)
+            recommendations.sort((a, b) => {
+                const ratingFields = ['rating', 'score', 'Rating', 'Score', 'imdb_rating', 'mal_rating'];
+                let ratingA = 0, ratingB = 0;
+                
+                for (const field of ratingFields) {
+                    if (a[field]) ratingA = parseFloat(a[field]) || 0;
+                    if (b[field]) ratingB = parseFloat(b[field]) || 0;
+                    if (ratingA > 0 && ratingB > 0) break;
+                }
+                
+                return ratingB - ratingA;
+            });
+            
+            displayAnime(recommendations, 'recommendationResults');
+            createSparkles();
+        }
+
+        // Load trending anime
+        function loadTrendingAnime() {
+            // For now, show top-rated anime as trending
+            const trendingAnime = animeDatabase
+                .filter(anime => anime.rating)
+                .sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0))
+                .slice(0, 12);
+            
+            displayAnime(trendingAnime, 'trendingResults');
+        }
+
+        // Display anime cards
+        function displayAnime(animeList, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (animeList.length === 0) {
+                container.innerHTML = '<div class="no-results">No anime found matching your criteria. Try different filters! 😊</div>';
+                return;
+            }
+            
+            container.innerHTML = animeList.map(anime => {
+                // Handle different possible field names
+                const titleFields = ['title', 'name', 'anime_title', 'Title', 'Name'];
+                const genreFields = ['genre', 'genres', 'Genre', 'Genres', 'category', 'categories'];
+                const ratingFields = ['rating', 'score', 'Rating', 'Score', 'imdb_rating', 'mal_rating'];
+                const synopsisFields = ['synopsis', 'description', 'Summary', 'Plot', 'overview'];
+                const episodeFields = ['episodes', 'episode_count', 'Episodes', 'ep_count', 'total_episodes'];
+                
+                let title = 'Unknown Title';
+                let genres = 'Unknown';
+                let rating = 'N/A';
+                let synopsis = 'No synopsis available.';
+                let episodes = 'Unknown';
+                
+                // Get title
+                for (const field of titleFields) {
+                    if (anime[field]) {
+                        title = anime[field];
+                        break;
+                    }
+                }
+                
+                // Get genres
+                for (const field of genreFields) {
+                    if (anime[field]) {
+                        if (Array.isArray(anime[field])) {
+                            genres = anime[field].join(', ');
+                        } else {
+                            genres = anime[field];
+                        }
+                        break;
+                    }
+                }
+                
+                // Get rating
+                for (const field of ratingFields) {
+                    if (anime[field]) {
+                        const ratingValue = parseFloat(anime[field]);
+                        if (!isNaN(ratingValue)) {
+                            rating = ratingValue.toFixed(1);
+                        }
+                        break;
+                    }
+                }
+                
+                // Get synopsis
+                for (const field of synopsisFields) {
+                    if (anime[field]) {
+                        synopsis = anime[field];
+                        break;
+                    }
+                }
+                
+                // Get episodes
+                for (const field of episodeFields) {
+                    if (anime[field]) {
+                        episodes = anime[field];
+                        break;
+                    }
+                }
+                
+                return `
+                    <div class="anime-card">
+                        <div class="anime-title">${title}</div>
+                        <div class="anime-genre">${genres}</div>
+                        <div class="anime-rating">⭐ ${rating}/10</div>
+                        <div class="anime-synopsis">${synopsis}</div>
+                        <div style="margin-top: 10px; font-size: 0.8em; color: #888;">
+                            Episodes: ${episodes === '1' ? 'Movie' : episodes}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Setup pagination
+        function setupPagination(totalItems, containerId, filteredData = null) {
+            const container = document.getElementById(containerId);
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1}, '${containerId}', ${filteredData ? 'filteredData' : 'null'})">Previous</button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHTML += `<button class="page-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="page-btn" onclick="changePage(${i}, '${containerId}', ${filteredData ? 'filteredData' : 'null'})">${i}</button>`;
+                }
+            }
+            
+            // Next button
+            paginationHTML += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1}, '${containerId}', ${filteredData ? 'filteredData' : 'null'})">Next</button>`;
+            
+            container.innerHTML = paginationHTML;
+        }
+
+        // Change page
+        function changePage(page, containerId, data = null) {
+            currentPage = page;
+            const dataToUse = data || animeDatabase;
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            const resultContainerId = containerId.replace('Pagination', 'Results');
+            displayAnime(dataToUse.slice(startIndex, endIndex), resultContainerId);
+            setupPagination(dataToUse.length, containerId, data);
+        }
+
+        // Create sparkles animation
+        function createSparkles() {
+            for (let i = 0; i < 10; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkles';
+                sparkle.innerHTML = '✨';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 2000);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnimeData();
+            
+            // Add search on enter key
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchAnime();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
